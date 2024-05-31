@@ -154,7 +154,7 @@ export default function Marketplace() {
             gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr)`,
           }}
         >
-          {[1, 2, 3, 4, 5, 6].map((item, index) => (
+          {[1, 2, 3, 4, 5, 6].map((_, index) => (
             <ChartCard key={index} />
           ))}
         </div>

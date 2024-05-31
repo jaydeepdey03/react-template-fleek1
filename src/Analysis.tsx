@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {ArrowLeft} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -8,7 +9,7 @@ import {CODE_SNIPPETS, type Language} from "./lib/constants";
 
 export default function Analysis() {
   const navigate = useNavigate();
-  const [language, setLanguage] = useState<Language>("python");
+  const [language] = useState<Language>("python");
   const [value, setValue] = useState<string | undefined>(
     CODE_SNIPPETS["python"]
   );

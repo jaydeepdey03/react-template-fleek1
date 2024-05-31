@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {useState} from "react";
 import {toast} from "sonner";
 import {executeCode} from "./api";
@@ -6,7 +8,7 @@ import {Button} from "./ui/button";
 
 const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
   const [output, setOutput] = useState([] || null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const runCode = async () => {

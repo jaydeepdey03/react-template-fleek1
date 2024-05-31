@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {CODE_SNIPPETS, type Language} from "@/lib/constants";
 import {Editor} from "@monaco-editor/react";
-import {useRef, useState} from "react";
 
 export default function CodeEditor({
   language,

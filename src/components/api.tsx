@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-refresh/only-export-components */
 import axios from "axios";
 import {LANGUAGE_VERSIONS} from "@/lib/constants";
 
