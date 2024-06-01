@@ -28,7 +28,7 @@ export default function Create() {
         >
           <ArrowLeft className="h-8 w-8 p-1 border rounded-full text-white" />
           <p className="text-white text-xl font-semibold">
-            Analysis of USDT-USDC Pair
+            Create New Analysis
           </p>
         </div>
         <div className="flex">

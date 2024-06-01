@@ -6,14 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, BarChartBig, Home, Pencil } from "lucide-react";
+import { ArrowRight, BarChartBig, LayoutDashboard, Pencil } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useContractHook } from "./Context/ContractContract";
 import { initializeProject } from "../src/components/api"
+import { useContractHook } from "./Context/ContractContract";
+
 // const data = [
 //   {
 //     average: 400,
@@ -190,10 +191,13 @@ export default function Marketplace() {
         </div>
 
         <div className="w-full h-full flex flex-col text-white">
-          <div className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer">
+          <div
+            className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
+            onClick={() => navigate("/marketplace")}
+          >
             <div className="flex items-center gap-2">
-              <Home />
-              <p className="text-lg font-semibold">Home</p>
+              <LayoutDashboard />
+              <p className="text-lg font-semibold">Marketplace</p>
             </div>
             <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
           </div>

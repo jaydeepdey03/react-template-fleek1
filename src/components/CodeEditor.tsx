@@ -16,6 +16,7 @@ export default function CodeEditor({
   return (
     <div className="h-full w-full">
       <Editor
+        theme="vs-dark"
         height="100%"
         width="100%"
         language={language}
