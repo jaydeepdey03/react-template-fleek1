@@ -1,5 +1,5 @@
 import "./App.css";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./Home";
 import Analysis from "./Analysis";
 import Marketplace from "./Marketplace";
@@ -10,18 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {useEffect, useState} from "react";
-import {useContractHook} from "./Context/ContractContract";
-import {Button} from "./components/ui/button";
+import { useEffect, useState } from "react";
+import { useContractHook } from "./Context/ContractContract";
+import { Button } from "./components/ui/button";
 
 function App() {
   const [open, setOpen] = useState(false);
-  const {chainId, switchNetwork} = useContractHook();
+  const { chainId, switchNetwork } = useContractHook();
   console.log(chainId, "chainId");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (chainId !== "" && chainId !== "0xaa36a7" && mounted) {
+    if (chainId !== "" && chainId !== "0x4cb2f" && mounted) {
       setOpen(true);
     }
   }, [chainId, mounted]);
@@ -43,7 +43,7 @@ function App() {
 
             <DialogDescription className="h-[100px] flex justify-center items-center">
               <Button
-                onClick={() => switchNetwork("0xaa36a7")}
+                onClick={() => switchNetwork("0x4cb2f")}
                 className="focus-visible:ring-0 w-full"
                 variant={"outline"}
                 size={"lg"}
@@ -53,7 +53,7 @@ function App() {
                   alt="sepolia"
                   className="mr-2 h-6 w-6"
                 />{" "}
-                Switch to Sepolia
+                Switch to Filecoin - Calibration testnet
               </Button>
             </DialogDescription>
           </DialogHeader>
