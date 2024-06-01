@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./Home";
 import Analysis from "./Analysis";
 import Marketplace from "./Marketplace";
@@ -10,15 +10,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
-import { useContractHook } from "./Context/ContractContract";
-import { Button } from "./components/ui/button";
+import {useEffect, useState} from "react";
+import {useContractHook} from "./Context/ContractContract";
+import {Button} from "./components/ui/button";
 import Create from "./Create";
 import UserAnalysis from "./UserAnalysis";
 
 function App() {
   const [open, setOpen] = useState(false);
-  const { chainId, switchNetwork } = useContractHook();
+  const {chainId, switchNetwork} = useContractHook();
   console.log(chainId, "chainId");
   const [mounted, setMounted] = useState(false);
 

@@ -56,9 +56,9 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = () => {
+const ChartCard = (id: {id: number}) => {
   const data = generateRandomData(); // Generate random data for each card
-
+  const navigate = useNavigate();
   return (
     <div className="h-full w-full">
       <Card className="h-full w-full">
@@ -110,7 +110,12 @@ const ChartCard = () => {
         <CardFooter>
           <div className="flex items-center justify-between w-full">
             <p className="text-sm">Author</p>
-            <Button size="sm" variant={"outline"} className="group">
+            <Button
+              size="sm"
+              variant={"outline"}
+              className="group"
+              onClick={() => navigate(`/analysis/${id.id}`)}
+            >
               View{" "}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
             </Button>
@@ -181,7 +186,7 @@ export default function UserAnalysis() {
           }}
         >
           {[1, 2, 3, 4, 5, 6].map((_, index) => (
-            <ChartCard key={index} />
+            <ChartCard key={index} id={index} />
           ))}
         </div>
       </div>

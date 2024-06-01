@@ -24,7 +24,7 @@ export default function Analysis() {
       <div className="h-[100px] w-full flex items-center justify-between px-10 bg-gray-900 absolute inset-0">
         <div
           className="flex items-center gap-6 cursor-pointer"
-          onClick={() => navigate(`/marketplace`)}
+          onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-8 w-8 p-1 border rounded-full text-white" />
           <p className="text-white text-xl font-semibold">
