@@ -4,12 +4,21 @@ import {useState} from "react";
 import {toast} from "sonner";
 import {executeCode} from "./api";
 import {Button} from "./ui/button";
-// import { executeCode } from "../api";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {SearchIcon} from "lucide-react";
+import {Input} from "./ui/input";
 
 const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
   const [output, setOutput] = useState([] || null);
   const [, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [openDatasetModal, setOpenDatasetModal] = useState(false);
 
   const runCode = async () => {
     const sourceCode = editorRef.current.getValue();
@@ -30,9 +39,155 @@ const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
 
   return (
     <div className="h-full w-full flex flex-col gap-4 items-end">
-      <Button className="w-[100px]" onClick={runCode}>
-        Run Code
-      </Button>
+      <Dialog open={openDatasetModal} onOpenChange={setOpenDatasetModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              <div className="relative ml-auto flex-1 md:grow-0 mt-5">
+                <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  className="w-full rounded-lg bg-background pl-8 focus-visible:ring-0"
+                />
+                <div className="grid grid-cols-3 grid-flow-row grid-rows-3 w-full place-items-center pt-5 gap-6">
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-28 w-full border rounded-xl">
+                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                      <img
+                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                        className="h-8 w-8"
+                        alt="placeholder"
+                      />
+                      <div className="text-center">
+                        <p className="text-sm">Dataset Title</p>
+                        <p className="text-xs">Dataset Description</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <div className="w-full flex justify-between">
+        <Button
+          className="focus-visible:ring-0"
+          variant={"outline"}
+          onClick={() => setOpenDatasetModal(true)}
+        >
+          Select Dataset
+        </Button>
+        <Button className="w-[100px]" onClick={runCode}>
+          Run Code
+        </Button>
+      </div>
       <div className="bg-white w-full h-full border-2 rounded-xl">
         <div
           className={`h-3/4 p-2 ${
