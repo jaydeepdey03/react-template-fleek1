@@ -23,7 +23,7 @@ function App() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (chainId !== "" && chainId !== "0x4cb2f" && mounted) {
+    if (chainId !== "" && chainId !== "0xaa36a7" && mounted) {
       setOpen(true);
     }
   }, [chainId, mounted]);
@@ -45,7 +45,7 @@ function App() {
 
             <DialogDescription className="h-[100px] flex justify-center items-center">
               <Button
-                onClick={() => switchNetwork("0x4cb2f")}
+                onClick={() => switchNetwork("0xaa36a7")}
                 className="focus-visible:ring-0 w-full"
                 variant={"outline"}
                 size={"lg"}
@@ -55,7 +55,7 @@ function App() {
                   alt="sepolia"
                   className="mr-2 h-6 w-6"
                 />{" "}
-                Switch to Filecoin - Calibration testnet
+                Switch to Sepolia testnet
               </Button>
             </DialogDescription>
           </DialogHeader>
@@ -68,7 +68,7 @@ function App() {
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/analysis/:id" element={<Analysis />} />
           <Route path="/create" element={<Create />} />
-          <Route path="/user-analysis/:user" element={<UserAnalysis />} />
+          <Route path="/user-analysis/" element={<UserAnalysis />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>
       </BrowserRouter>
