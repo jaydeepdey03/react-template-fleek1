@@ -1,8 +1,14 @@
+import {useNavigate} from "react-router-dom";
 import {Button} from "./components/ui/button";
 import {useContractHook} from "./Context/ContractContract";
+import {ArrowRight} from "lucide-react";
 
 export default function Home() {
-  const {connectWallet} = useContractHook();
+  const {connectWallet, currentAccount} = useContractHook();
+  const navigate = useNavigate();
+
+  console.log(currentAccount, "currentAccount");
+
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-screen h-screen">
       <div className="hidden bg-muted lg:block">
@@ -43,14 +49,24 @@ export default function Home() {
             </p> */}
           </div>
           <div className="grid gap-4">
-            <Button variant="outline" onClick={connectWallet}>
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/2048px-MetaMask_Fox.svg.png"
-                alt="farcaster"
-                className="w-5 aspect-square"
-              />{" "}
-              <span className="ml-2">Login with Metmask</span>
-            </Button>
+            {currentAccount !== "" ? (
+              <Button
+                variant="outline"
+                onClick={() => navigate("/marketplace")}
+              >
+                <span className="mr-2">Go to Marketplace</span>{" "}
+                <ArrowRight className="mr-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={connectWallet}>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/2048px-MetaMask_Fox.svg.png"
+                  alt="farcaster"
+                  className="w-5 aspect-square"
+                />{" "}
+                <span className="ml-2">Login with Metmask</span>
+              </Button>
+            )}
           </div>
           {/* <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}

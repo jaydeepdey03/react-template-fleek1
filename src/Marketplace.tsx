@@ -10,6 +10,9 @@ import {ArrowRight, Home, LayoutDashboard} from "lucide-react";
 import {Button} from "./components/ui/button";
 import {Line, LineChart, ResponsiveContainer} from "recharts";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
+import {useContractHook} from "./Context/ContractContract";
 
 // const data = [
 //   {
@@ -55,7 +58,13 @@ const generateRandomData = () => {
 
 const ChartCard = () => {
   const data = generateRandomData(); // Generate random data for each card
-
+  const navigate = useNavigate();
+  const {chainId, currentAccount} = useContractHook();
+  useEffect(() => {
+    if (chainId === "" && currentAccount === "") {
+      navigate("/");
+    }
+  }, [chainId, currentAccount, navigate]);
   return (
     <div className="h-full w-full">
       <Card className="h-full w-full">

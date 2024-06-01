@@ -43,12 +43,14 @@ export const VoterContext = createContext<{
   contractAddress: string;
   contract: any;
   chainId: string;
+  currentAccount: string;
 }>({
   switchNetwork: () => new Promise(() => {}),
   connectWallet: () => {},
   contractAddress: "",
   contract: null,
   chainId: "",
+  currentAccount: "",
 });
 
 export const ContractContextProvider = ({children}: {children: ReactNode}) => {
@@ -168,6 +170,7 @@ export const ContractContextProvider = ({children}: {children: ReactNode}) => {
         connectWallet,
         contractAddress,
         contract,
+        currentAccount,
       }}
     >
       {children}
