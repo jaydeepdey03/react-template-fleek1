@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        "hero-pattern": "url('/stacked-waves-black.png')",
+      },
       fontFamily: {
         Poppins: ["Poppins", "sans-serif"],
       },

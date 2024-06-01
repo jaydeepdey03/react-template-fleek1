@@ -57,62 +57,64 @@ const ChartCard = () => {
   const data = generateRandomData(); // Generate random data for each card
 
   return (
-    <Card className="h-full w-full">
-      <CardHeader className="">
-        <div className="flex justify-between w-full items-center">
-          <div>
-            <CardTitle>Analysis Title</CardTitle>
-            <CardDescription>Analysis Description</CardDescription>
+    <div className="h-full w-full">
+      <Card className="h-full w-full">
+        <CardHeader className="">
+          <div className="flex justify-between w-full items-center">
+            <div>
+              <CardTitle>Analysis Title</CardTitle>
+              <CardDescription>Analysis Description</CardDescription>
+            </div>
+            <div className="flex">
+              <Avatar className="h-8 w-8 -ml-4 first:ml-0">
+                <AvatarImage src="/usdc.png" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <Avatar className="h-8 w-8 -ml-4">
+                <AvatarImage src="/dai.png" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <Avatar className="h-8 w-8 -ml-4">
+                <AvatarImage src="/eth.png" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+            </div>
           </div>
-          <div className="flex">
-            <Avatar className="h-8 w-8 -ml-4 first:ml-0">
-              <AvatarImage src="/usdc.png" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <Avatar className="h-8 w-8 -ml-4">
-              <AvatarImage src="/dai.png" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <Avatar className="h-8 w-8 -ml-4">
-              <AvatarImage src="/eth.png" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[150px] relative">
+            <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
+              <p className="font-semibold">Purchase this analysis to reveal</p>
+            </div>
+            <div className="absolute inset-0 w-full h-full blur-sm">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={data}
+                  margin={{
+                    top: 5,
+                    right: 10,
+                    left: 10,
+                    bottom: 0,
+                  }}
+                >
+                  <Line type="monotone" dataKey="average" />
+                  <Line type="monotone" dataKey="today" aria-disabled />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[150px] relative">
-          <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
-            <p className="font-semibold">Purchase this analysis to reveal</p>
+        </CardContent>
+        <CardFooter>
+          <div className="flex items-center justify-between w-full">
+            <p className="text-sm">Author</p>
+            <Button size="sm" variant={"outline"} className="group">
+              Buy{" "}
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
+            </Button>
           </div>
-          <div className="absolute inset-0 w-full h-full blur-sm">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={data}
-                margin={{
-                  top: 5,
-                  right: 10,
-                  left: 10,
-                  bottom: 0,
-                }}
-              >
-                <Line type="monotone" dataKey="average" />
-                <Line type="monotone" dataKey="today" aria-disabled />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <div className="flex items-center justify-between w-full">
-          <p className="text-sm">Author</p>
-          <Button size="sm" variant={"outline"} className="group">
-            Buy{" "}
-            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
