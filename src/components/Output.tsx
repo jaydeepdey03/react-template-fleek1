@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {useState} from "react";
-import {toast} from "sonner";
-import {executeCode} from "./api";
-import {Button} from "./ui/button";
+import { useState } from "react";
+import { toast } from "sonner";
+import { executeCode } from "./api";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,21 +11,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {SearchIcon} from "lucide-react";
-import {Input} from "./ui/input";
+import { SearchIcon } from "lucide-react";
+import { Input } from "./ui/input";
+import { useContractHook } from "../Context/ContractContract";
 
-const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
+const Output = ({ editorRef, language }: { editorRef: any; language: string }) => {
   const [output, setOutput] = useState([] || null);
   const [, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [openDatasetModal, setOpenDatasetModal] = useState(false);
+
+  const { accessControl } = useContractHook();
 
   const runCode = async () => {
     const sourceCode = editorRef.current.getValue();
     if (!sourceCode) return;
     try {
       setIsLoading(true);
-      const {run: result} = await executeCode(language, sourceCode);
+      const { run: result } = await executeCode(language, sourceCode);
       setOutput(result.output.split("\n"));
       result.stderr ? setIsError(true) : setIsError(false);
       console.log(sourceCode, "sourceCode");
@@ -36,6 +39,15 @@ const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
       setIsLoading(false);
     }
   };
+
+
+  const publishCode = async () => {
+    const cid = '';
+    accessControl(cid);
+
+    console.log('publishing code');
+  }
+
 
   return (
     <div className="h-full w-full flex flex-col gap-4 items-end">
@@ -187,14 +199,15 @@ const Output = ({editorRef, language}: {editorRef: any; language: string}) => {
         <Button className="w-[100px]" onClick={runCode}>
           Run Code
         </Button>
+        <Button className="w-[100px]" onClick={() => publishCode}>
+          Publish Code
+        </Button>
       </div>
       <div className="bg-white w-full h-full border-2 rounded-xl">
         <div
-          className={`h-3/4 p-2 ${
-            isError ? "text-red-400" : ""
-          } border-1 border-solid rounded-md ${
-            isError ? "border-red-500" : "border-gray-300"
-          }`}
+          className={`h-3/4 p-2 ${isError ? "text-red-400" : ""
+            } border-1 border-solid rounded-md ${isError ? "border-red-500" : "border-gray-300"
+            }`}
         >
           {output
             ? output.map((line, i) => <p key={i}>{line}</p>)

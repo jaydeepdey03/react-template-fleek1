@@ -6,14 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {ArrowRight, BarChartBig, Home, Pencil} from "lucide-react";
-import {Button} from "./components/ui/button";
-import {Line, LineChart, ResponsiveContainer} from "recharts";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
-import {useContractHook} from "./Context/ContractContract";
-
+import { ArrowRight, BarChartBig, Home, Pencil } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useContractHook } from "./Context/ContractContract";
+import { initializeProject } from "../src/components/api"
 // const data = [
 //   {
 //     average: 400,
@@ -44,6 +44,12 @@ import {useContractHook} from "./Context/ContractContract";
 //     today: 430,
 //   },
 // ];
+
+type Workbook = {
+  owner: string;
+  ipns: string;
+  name: string;
+};
 
 const generateRandomData = () => {
   const data = [];
@@ -123,12 +129,55 @@ const ChartCard = () => {
 
 export default function Marketplace() {
   const navigate = useNavigate();
-  const {chainId, currentAccount} = useContractHook();
+  const { chainId, currentAccount, contract } = useContractHook();
+  const [workbooks, setWorkbooks] = useState<Workbook[]>([]);
+
+
   useEffect(() => {
     if (chainId === "" && currentAccount === "") {
       navigate("/");
     }
   }, [chainId, currentAccount, navigate]);
+
+  useEffect(() => {
+
+    console.log("contract", contract);
+    const viewAllWorkBooks = async () => {
+      try {
+        const result = await contract.viewAllWorkbooks();
+        console.log(result, "workbooks");
+        const temp: Workbook[] = [];
+        result.forEach((workbook: Workbook) => {
+          if (workbook) {
+            temp.push({ owner: workbook.owner, ipns: workbook.ipns, name: workbook.name });
+          }
+        });
+        setWorkbooks(temp);
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    viewAllWorkBooks()
+  }, [contract])
+
+  const handleNewAnalysis = async () => {
+
+    try {
+      const response = await initializeProject();
+      console.log("response", response);
+      const res = await contract.addIPNS("test", response.ipnsName);
+      await res.wait();
+      console.log(res, "res");
+
+      navigate("/create")
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row">
@@ -150,7 +199,7 @@ export default function Marketplace() {
           </div>
           <div
             className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
-            onClick={() => navigate("/create")}
+            onClick={() => handleNewAnalysis()}
           >
             <div className="flex items-center gap-2">
               <Pencil />
@@ -160,7 +209,7 @@ export default function Marketplace() {
           </div>
           <div
             className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
-            onClick={() => navigate("/user-analysis/1")}
+            onClick={() => navigate("/user-analysis")}
           >
             <div className="flex items-center gap-2">
               <BarChartBig />
@@ -180,7 +229,7 @@ export default function Marketplace() {
             gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr)`,
           }}
         >
-          {[1, 2, 3, 4, 5, 6].map((_, index) => (
+          {workbooks.map((value, index) => (
             <ChartCard key={index} />
           ))}
         </div>
