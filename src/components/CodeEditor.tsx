@@ -22,9 +22,7 @@ export default function CodeEditor({
         defaultValue={CODE_SNIPPETS[language]}
         onMount={onMount}
         value={value}
-        onChange={(value) =>
-          setValue(value ?? "" /* Provide a default if value is undefined */)
-        }
+        onChange={(value) => setValue(value ?? "")}
       />
     </div>
   );

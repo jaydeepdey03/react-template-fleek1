@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {ArrowRight, BarChartBig, Home, Pencil} from "lucide-react";
+import {ArrowRight, BarChartBig, LayoutDashboard, Pencil} from "lucide-react";
 import {Button} from "./components/ui/button";
 import {Line, LineChart, ResponsiveContainer} from "recharts";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -86,10 +86,10 @@ const ChartCard = () => {
         </CardHeader>
         <CardContent>
           <div className="h-[150px] relative">
-            <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
+            {/* <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
               <p className="font-semibold">Purchase this analysis to reveal</p>
-            </div>
-            <div className="absolute inset-0 w-full h-full blur-sm">
+            </div> */}
+            <div className="absolute inset-0 w-full h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={data}
@@ -111,7 +111,7 @@ const ChartCard = () => {
           <div className="flex items-center justify-between w-full">
             <p className="text-sm">Author</p>
             <Button size="sm" variant={"outline"} className="group">
-              Buy{" "}
+              View{" "}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
             </Button>
           </div>
@@ -121,7 +121,7 @@ const ChartCard = () => {
   );
 };
 
-export default function Marketplace() {
+export default function UserAnalysis() {
   const navigate = useNavigate();
   const {chainId, currentAccount} = useContractHook();
   useEffect(() => {
@@ -141,10 +141,13 @@ export default function Marketplace() {
         </div>
 
         <div className="w-full h-full flex flex-col text-white">
-          <div className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer">
+          <div
+            className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
+            onClick={() => navigate("/marketplace")}
+          >
             <div className="flex items-center gap-2">
-              <Home />
-              <p className="text-lg font-semibold">Home</p>
+              <LayoutDashboard />
+              <p className="text-lg font-semibold">Marketplace</p>
             </div>
             <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
           </div>
@@ -158,10 +161,7 @@ export default function Marketplace() {
             </div>
             <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
           </div>
-          <div
-            className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
-            onClick={() => navigate("/user-analysis/1")}
-          >
+          <div className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer">
             <div className="flex items-center gap-2">
               <BarChartBig />
               <p className="text-lg font-semibold">Your Analysis</p>
@@ -172,7 +172,7 @@ export default function Marketplace() {
       </div>
       <div className="h-full w-full p-5">
         <div className="pb-5 text-lg font-semibold text-gray-800">
-          All Analysis
+          Your Analysis (8)
         </div>
         <div
           className="grid h-fit w-full gap-4"
