@@ -11,28 +11,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {SearchIcon} from "lucide-react";
-import {Input} from "./ui/input";
 import {useContractHook} from "../Context/ContractContract";
 import {runPythonScript, publishCode} from "../components/api";
+import {Editor} from "@monaco-editor/react";
+import {pythonCode} from "@/lib/constants";
+import {InfoIcon, Loader2} from "lucide-react";
 
 const Output = ({
   editorRef,
   // language,
   contentKey,
   contentValue,
+  id,
 }: {
   editorRef?: any;
   language?: string;
   contentKey?: any;
   contentValue?: any;
+  id?: string;
 }) => {
   const [output, setOutput] = useState<any>([] || null);
   const [, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [openDatasetModal, setOpenDatasetModal] = useState(false);
 
-  const {accessControl} = useContractHook();
+  const {contract} = useContractHook();
 
   const runCode = async () => {
     const sourceCode = editorRef.current.getValue();
@@ -54,10 +57,12 @@ const Output = ({
     }
   };
 
+  const [publishLoading, setPublishLoading] = useState(false);
   const publish = async () => {
     // push code to ipfs
     // get the cid
     // push in ipns using ipns name
+    setPublishLoading(true);
     try {
       const {ipnsName} = contentKey;
 
@@ -65,148 +70,95 @@ const Output = ({
       const publish = await publishCode(ipnsName);
       console.log(publish, "runCode");
 
-      const res = await accessControl(publish.ipfsHash);
-      console.log(res, "accessControl");
+      const publishSheet = await contract.publishSheet(id);
+      await publishSheet.wait();
+      // const res = await accessControl(publish.ipfsHash);
+      // console.log(res, "accessControl");
       console.log("publishing code");
+      toast("Code published successfully");
     } catch (error: any) {
       console.log(error);
       toast(`Error: ${error.message}`);
+    } finally {
+      setPublishLoading(false);
     }
   };
 
   return (
     <div className="h-full w-full flex flex-col gap-4 items-end">
       <Dialog open={openDatasetModal} onOpenChange={setOpenDatasetModal}>
-        <DialogContent>
+        <DialogContent className="w-[600px]">
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              <div className="relative ml-auto flex-1 md:grow-0 mt-5">
+            <DialogTitle>Instruction</DialogTitle>
+            <DialogDescription className="w-full">
+              {/* <div className="relative ml-auto flex-1 md:grow-0 mt-5">
                 <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Search..."
                   className="w-full rounded-lg bg-background pl-8 focus-visible:ring-0"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="grid grid-cols-3 grid-flow-row grid-rows-3 w-full place-items-center pt-5 gap-6">
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
+                  {[1, 2, 3, 4, 5, 6].map((_, index) => (
+                    <div
+                      className="h-28 w-full border rounded-xl cursor-pointer hover:bg-gray-100"
+                      key={index}
+                      onClick={() => {
+                        const newOpenModals = [...openModals];
+                        newOpenModals[index] = true;
+                        setOpenModals(newOpenModals);
+                      }}
+                    >
+                      <Dialog
+                        open={openModals[index]}
+                        onOpenChange={(isOpen) => {
+                          const newOpenModals = [...openModals];
+                          newOpenModals[index] = isOpen;
+                          setOpenModals(newOpenModals);
+                        }}
+                      >
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Are you absolutely sure?</DialogTitle>
+                            <DialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete your account and remove your
+                              data from our servers.
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
+
+                      <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
+                        <img
+                          src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
+                          className="h-8 w-8"
+                          alt="placeholder"
+                        />
+                        <div className="text-center">
+                          <p className="text-sm">Dataset Title</p>
+                          <p className="text-xs">Dataset Description</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-28 w-full border rounded-xl">
-                    <div className="flex flex-col gap-3 justify-center h-full w-full items-center">
-                      <img
-                        src="https://s3.coinmarketcap.com/static-gravity/image/5a8229787b5e4c809b5914eef709b59a.png"
-                        className="h-8 w-8"
-                        alt="placeholder"
-                      />
-                      <div className="text-center">
-                        <p className="text-sm">Dataset Title</p>
-                        <p className="text-xs">Dataset Description</p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
+              </div> */}
+              <div className="w-full h-full flex flex-col gap-3">
+                <p>Select a dataset from the list below to use in your code</p>
+                <Editor
+                  theme="vs-dark"
+                  height="300px"
+                  width="100%"
+                  language={"python"}
+                  defaultValue={pythonCode}
+                  options={{
+                    readOnly: true,
+                    wordWrap: "on",
+                  }}
+                />
               </div>
             </DialogDescription>
           </DialogHeader>
@@ -215,19 +167,27 @@ const Output = ({
 
       <div className="w-full flex justify-between">
         <Button
-          className="focus-visible:ring-0"
+          className="focus-visible:ring-0 flex gap-2"
           variant={"outline"}
           onClick={() => setOpenDatasetModal(true)}
         >
-          Select Dataset
+          <InfoIcon className="h-full w-full" />
+          <p>Instructions</p>
         </Button>
         <div className="flex items-center gap-3">
           <Button className="w-[100px]" onClick={runCode}>
             Run Code
           </Button>
-          <Button className="w-[100px]" onClick={() => publish()}>
-            Publish Code
-          </Button>
+          {publishLoading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Publishing
+            </Button>
+          ) : (
+            <Button className="" onClick={() => publish()}>
+              Publish Code
+            </Button>
+          )}
         </div>
       </div>
       <div className="bg-white w-full h-[500px] lg:h-full rounded-xl flex flex-col gap-2">
@@ -238,30 +198,32 @@ const Output = ({
             isError ? "border-red-500" : "border-gray-300"
           }`}
         >
-          {/* {<pre>{JSON.stringify(output, null, 2) || null}</pre>} */}
+          {/* {<pre>{JSON.stringify(typeof output, null, 2) || null}</pre>} */}
 
-          {}
-          {output &&
+          {typeof output === "string" && <p>{output}</p>}
+
+          {typeof output === "object" &&
+            output &&
             output.messages &&
             output.messages.map((line: any, i: number) => (
               <p key={i}>{line}</p>
             ))}
 
-          {output &&
+          {typeof output === "object" &&
+            output &&
             output.messages === undefined &&
             output.map((line: any, i: number) => <p key={i}>{line}</p>)}
 
-          {/* {output && output.messages.length === 0 && (
-            <p>Click "Run Code" to see the output here</p>
-          )} */}
-
-          {output && output.length === 0 && (
+          {typeof output === "object" && output && output.length === 0 && (
             <p>Click "Run Code" to see the output here</p>
           )}
 
-          {output && output.messages && output.length === 0 && (
-            <p>Click "Run Code" to see the output here</p>
-          )}
+          {typeof output === "object" &&
+            output &&
+            output.messages &&
+            output.length === 0 && (
+              <p>Click "Run Code" to see the output here</p>
+            )}
 
           {/* <p>Click "Run Code" to see the output here</p> */}
         </div>

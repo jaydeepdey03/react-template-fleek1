@@ -2,7 +2,7 @@
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -61,6 +61,7 @@ type Workbook = {
   ipns: string;
   name: string;
   id: number;
+  published: boolean;
 };
 
 const generateRandomData = () => {
@@ -74,9 +75,20 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = ({id, purchasedIds}: {id: number; purchasedIds: any}) => {
+const ChartCard = ({
+  id,
+  purchasedIds,
+  title,
+  owner,
+}: {
+  id: number;
+  purchasedIds: any;
+  title: string;
+  owner: string;
+}) => {
   const data = generateRandomData(); // Generate random data for each card
   const {currentAccount, contractAddress, contract} = useContractHook();
+  const navigate = useNavigate();
 
   const approveAndSendTokens = async (id: number) => {
     if (!currentAccount) {
@@ -116,14 +128,14 @@ const ChartCard = ({id, purchasedIds}: {id: number; purchasedIds: any}) => {
     }
   };
 
+  console.log(purchasedIds, "purchasedIds");
   return (
     <div className="h-full w-full">
       <Card className="h-full w-full">
         <CardHeader className="">
           <div className="flex justify-between w-full items-center">
             <div>
-              <CardTitle>Analysis Title</CardTitle>
-              <CardDescription>Analysis Description</CardDescription>
+              <CardTitle>{title}</CardTitle>
             </div>
             <div className="flex">
               <Avatar className="h-8 w-8 -ml-4 first:ml-0">
@@ -143,16 +155,19 @@ const ChartCard = ({id, purchasedIds}: {id: number; purchasedIds: any}) => {
         </CardHeader>
         <CardContent>
           <div className="h-[150px] relative">
-            {!purchasedIds.includes(id) && (
-              <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
-                <p className="font-semibold">
-                  Purchase this analysis to reveal
-                </p>
-              </div>
-            )}
+            {!purchasedIds.includes(id) ||
+              (owner.toLowerCase() === currentAccount.toLowerCase() && (
+                <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
+                  <p className="font-semibold">
+                    Purchase this analysis to reveal
+                  </p>
+                </div>
+              ))}
             <div
               className={`absolute inset-0 w-full h-full ${
-                !purchasedIds.includes(id) && "blur-sm"
+                !purchasedIds.includes(id) ||
+                (owner.toLowerCase() === currentAccount.toLowerCase() &&
+                  "blur-sm")
               }`}
             >
               <ResponsiveContainer width="100%" height="100%">
@@ -174,15 +189,19 @@ const ChartCard = ({id, purchasedIds}: {id: number; purchasedIds: any}) => {
         </CardContent>
         <CardFooter>
           <div className="flex items-center justify-between w-full">
-            <p className="text-sm">Author</p>
-            {purchasedIds.includes(id) ? (
+            <div className="flex flex-col items-start">
+              <p className="text-sm">Author</p>
+              <p className="text-sm font-semibold">
+                {owner.slice(0, 6) + "..." + owner.slice(owner.length - 4)}
+              </p>
+            </div>
+            {purchasedIds.includes(id) ||
+            owner.toLowerCase() === currentAccount.toLowerCase() ? (
               <Button
                 size="sm"
                 variant={"outline"}
-                className="group"
-                onClick={() =>
-                  alert("You have already purchased this analysis")
-                }
+                className="group focus-visible:ring-0"
+                onClick={() => navigate(`/analysis/${id}`)}
               >
                 View{" "}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
@@ -230,6 +249,7 @@ export default function Marketplace() {
               ipns: workbook.ipns,
               name: workbook.name,
               id: Number(workbook.id),
+              published: workbook.published,
             });
           }
         });
@@ -267,11 +287,18 @@ export default function Marketplace() {
     try {
       const response = await initializeProject();
       console.log("response", response);
-      const res = await contract.addIPNS("test", response.ipnsName);
-      await res.wait();
-      console.log(res, "res");
-      if (res) {
-        navigate("/analysis/" + Number(res.id));
+      const currentId = await contract.currentId();
+      console.log(currentId, "currentId");
+      if (Number(currentId)) {
+        const res = await contract.addIPNS(
+          `Untitled${Number(currentId)}`,
+          response.ipnsName
+        );
+        await res.wait();
+        console.log(res, "res");
+        if (res) {
+          navigate("/analysis/" + Number(currentId));
+        }
       }
     } catch (error) {
       console.log(error);
@@ -279,6 +306,8 @@ export default function Marketplace() {
       setCreateLoading(false);
     }
   };
+
+  console.log(workbooks, "workbooks from marketplace");
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row">
@@ -348,27 +377,25 @@ export default function Marketplace() {
           }}
         >
           {/* {<pre>{JSON.stringify(currentAccount, null, 2)}</pre>} */}
+
           {workbooks &&
             workbooks.length > 0 &&
             workbooks
-              .filter(
-                (item) =>
-                  currentAccount.toLowerCase() !== item.owner.toLowerCase()
-              )
+              .filter((item) => item.published === true)
               .map((item, index) => (
                 <ChartCard
                   key={index}
                   id={Number(item.id)}
                   purchasedIds={purchasedIds}
+                  title={item.name}
+                  owner={item.owner.toLowerCase()}
                 />
               ))}
 
           {workbooks &&
-            workbooks.filter(
-              (item) =>
-                currentAccount.toLowerCase() !== item.owner.toLowerCase()
-            ).length === 0 && (
-              <div className="w-full h-full flex justify-center items-center">
+            workbooks.filter((item) => item.published === true).length ===
+              0 && (
+              <div className="w-full h-full flex justify-center items-center text-center">
                 <p className="text-lg font-semibold">No Analysis found</p>
               </div>
             )}

@@ -76,10 +76,8 @@ export default function Analysis() {
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-8 w-8 p-1 border rounded-full text-white" />
-          <p className="text-white text-xl font-semibold">
-            {sheetDetails?.name}
-          </p>
         </div>
+        <p className="text-white text-xl font-semibold">{sheetDetails?.name}</p>
         <div className="flex">
           <Avatar className="h-8 w-8 -ml-4 first:ml-0">
             <AvatarImage src="/usdc.png" />
@@ -128,6 +126,7 @@ export default function Analysis() {
             language={language}
             contentKey={contentKey}
             contentValue={value}
+            id={id}
           />
         </div>
       </div>

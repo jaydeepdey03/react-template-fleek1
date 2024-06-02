@@ -18,3 +18,25 @@ export const CODE_SNIPPETS: { [key in Language]: string } = {
         'using System;\n\nnamespace HelloWorld\n{\n\tclass Hello { \n\t\tstatic void Main(string[] args) {\n\t\t\tConsole.WriteLine("Hello World in C#");\n\t\t}\n\t}\n}\n',
     "php": "<?php\n\n$name = 'Alex';\necho $name;\n",
 };
+
+
+export const pythonCode = `# This is the code snippet fetch token variables from API
+import requests
+
+def fetchData(api_url):
+\tres = requests.get(api_url)
+\tdata = res.json()
+
+# greet("Alex")
+# This is for token details
+fetchData("http://localhost:8000/getTokenDetailsLatest?symbol=WETH")
+
+# This is for past token details, num is the number of previous epochs values
+fetchData("http://localhost:8000/getTokenPrice?num=5&symbol=WETH")
+
+
+
+# Save the figure as plot.png to visualize the graph in the visualizer
+import matplotlib.pyplot as plt
+plt.savefig('plot.png')
+`;

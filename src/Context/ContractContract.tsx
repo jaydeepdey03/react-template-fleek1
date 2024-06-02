@@ -5,7 +5,7 @@ import {useEffect, useState, createContext, ReactNode, useContext} from "react";
 import {ethers} from "ethers";
 import lighthouse from "@lighthouse-web3/sdk";
 
-import abi from "../lib/abi";
+import {abi} from "../lib/abi";
 import {toast} from "sonner";
 
 declare global {
@@ -38,7 +38,7 @@ export const ContractContextProvider = ({children}: {children: ReactNode}) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [contract, setContract] = useState<any>(null);
 
-  const contractAddress = "0xBF9743CC2Ee28722242c85D11E3407A9d2E974b8";
+  const contractAddress = "0xFEfdF9392744d81d1aCa602dcE2b3194F513fDB5";
   const contractABI = abi;
   const ethereum = window?.ethereum;
 

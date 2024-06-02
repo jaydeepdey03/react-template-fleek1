@@ -1,4 +1,4 @@
-const abi = [
+export const abi = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -62,6 +62,19 @@ const abi = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "currentId",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -111,6 +124,11 @@ const abi = [
                         "internalType": "string",
                         "name": "name",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "published",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct LoomHub.Sheet",
@@ -158,6 +176,19 @@ const abi = [
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_id",
+                "type": "uint256"
+            }
+        ],
+        "name": "publishSheet",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -216,6 +247,11 @@ const abi = [
                         "internalType": "string",
                         "name": "name",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "published",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct LoomHub.Sheet[]",
@@ -251,6 +287,11 @@ const abi = [
                         "internalType": "string",
                         "name": "name",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "published",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct LoomHub.Sheet[]",
@@ -292,6 +333,11 @@ const abi = [
                         "internalType": "string",
                         "name": "name",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "published",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct LoomHub.Sheet",
@@ -331,11 +377,14 @@ const abi = [
                 "internalType": "string",
                 "name": "name",
                 "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "published",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
         "type": "function"
     }
 ]
-
-export default abi;
