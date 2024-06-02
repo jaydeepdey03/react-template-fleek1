@@ -74,7 +74,7 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = ({id}: {id: number}) => {
+const ChartCard = ({id, purchasedIds}: {id: number; purchasedIds: any}) => {
   const data = generateRandomData(); // Generate random data for each card
   const {currentAccount, contractAddress, contract} = useContractHook();
 
@@ -143,10 +143,18 @@ const ChartCard = ({id}: {id: number}) => {
         </CardHeader>
         <CardContent>
           <div className="h-[150px] relative">
-            <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
-              <p className="font-semibold">Purchase this analysis to reveal</p>
-            </div>
-            <div className="absolute inset-0 w-full h-full blur-sm">
+            {!purchasedIds.includes(id) && (
+              <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
+                <p className="font-semibold">
+                  Purchase this analysis to reveal
+                </p>
+              </div>
+            )}
+            <div
+              className={`absolute inset-0 w-full h-full ${
+                !purchasedIds.includes(id) && "blur-sm"
+              }`}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={data}
@@ -167,15 +175,29 @@ const ChartCard = ({id}: {id: number}) => {
         <CardFooter>
           <div className="flex items-center justify-between w-full">
             <p className="text-sm">Author</p>
-            <Button
-              size="sm"
-              variant={"outline"}
-              className="group"
-              onClick={() => approveAndSendTokens(id)}
-            >
-              Buy{" "}
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
-            </Button>
+            {purchasedIds.includes(id) ? (
+              <Button
+                size="sm"
+                variant={"outline"}
+                className="group"
+                onClick={() =>
+                  alert("You have already purchased this analysis")
+                }
+              >
+                View{" "}
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant={"outline"}
+                className="group"
+                onClick={() => approveAndSendTokens(id)}
+              >
+                Buy{" "}
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
+              </Button>
+            )}
           </div>
         </CardFooter>
       </Card>
@@ -219,6 +241,25 @@ export default function Marketplace() {
     };
     viewAllWorkBooks();
   }, [contract]);
+
+  const [purchasedIds, setPurchasedIds] = useState<any>([]);
+  useEffect(() => {
+    console.log("contract", contract);
+    const getId = async () => {
+      try {
+        const result = await contract.viewAllIds();
+        console.log(result, "workbooks");
+        const newResult = result.map((item: any) => Number(item));
+        setPurchasedIds(newResult);
+      } catch (error: any) {
+        console.log(error);
+        toast(`Error: ${error.message}`);
+      }
+    };
+    getId();
+  }, [contract]);
+
+  console.log(purchasedIds, "purchasedIds");
 
   const [createLoading, setCreateLoading] = useState(false);
   const handleNewAnalysis = async () => {
@@ -315,7 +356,11 @@ export default function Marketplace() {
                   currentAccount.toLowerCase() !== item.owner.toLowerCase()
               )
               .map((item, index) => (
-                <ChartCard key={index} id={Number(item.id)} />
+                <ChartCard
+                  key={index}
+                  id={Number(item.id)}
+                  purchasedIds={purchasedIds}
+                />
               ))}
 
           {workbooks &&
