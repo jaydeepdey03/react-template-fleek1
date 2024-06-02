@@ -14,8 +14,9 @@ import {
 import { SearchIcon } from "lucide-react";
 import { Input } from "./ui/input";
 import { useContractHook } from "../Context/ContractContract";
+import { runPythonScript, publishCode } from "../components/api"
 
-const Output = ({ editorRef, language }: { editorRef: any; language: string }) => {
+const Output = ({ editorRef, language, contentKey, contentValue }: { editorRef: any; language: string, contentKey: any, contentValue: any }) => {
   const [output, setOutput] = useState([] || null);
   const [, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -28,9 +29,12 @@ const Output = ({ editorRef, language }: { editorRef: any; language: string }) =
     if (!sourceCode) return;
     try {
       setIsLoading(true);
-      const { run: result } = await executeCode(language, sourceCode);
-      setOutput(result.output.split("\n"));
-      result.stderr ? setIsError(true) : setIsError(false);
+      // const { run: result } = await executeCode(language, sourceCode);
+      const result = await runPythonScript(contentKey.ipnsName, contentValue);
+      console.log(result, "result");
+
+      setOutput(result);
+      result ? setIsError(true) : setIsError(false);
       console.log(sourceCode, "sourceCode");
     } catch (error: any) {
       console.log(error);
@@ -41,11 +45,26 @@ const Output = ({ editorRef, language }: { editorRef: any; language: string }) =
   };
 
 
-  const publishCode = async () => {
-    const cid = '';
-    accessControl(cid);
+  const publish = async () => {
 
-    console.log('publishing code');
+    // push code to ipfs 
+    // get the cid
+    // push in ipns using ipns name
+    try {
+      const { cid, ipnsName, ipnsId } = contentKey;
+
+      const runCode = await runPythonScript(ipnsName, contentValue);
+      const publish = await publishCode(ipnsName);
+      console.log(publish, "runCode");
+
+
+      const res = await accessControl(publish.ipfsHash);
+      console.log(res, "accessControl");
+      console.log('publishing code');
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -199,7 +218,7 @@ const Output = ({ editorRef, language }: { editorRef: any; language: string }) =
         <Button className="w-[100px]" onClick={runCode}>
           Run Code
         </Button>
-        <Button className="w-[100px]" onClick={() => publishCode}>
+        <Button className="w-[100px]" onClick={() => publish()}>
           Publish Code
         </Button>
       </div>

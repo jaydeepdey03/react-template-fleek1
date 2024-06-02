@@ -30,7 +30,8 @@ export const initializeProject = async () => {
 }
 
 // runPythonScript
-export const runPythonScript = async (pythonScriptContent: any, ipnsName: string) => {
+export const runPythonScript = async (ipnsName: string, pythonScriptContent: any) => {
+  console.log("hello", ipnsName, pythonScriptContent)
   const response = await API.post("/runPythonScript", {
     pythonScriptContent: pythonScriptContent,
     ipnsName: ipnsName
@@ -39,9 +40,24 @@ export const runPythonScript = async (pythonScriptContent: any, ipnsName: string
 };
 
 // publish
-export const publish = async (ipnsName: string) => {
+export const publishCode = async (ipnsName: string) => {
   const response = await API.post("/publish", {
     ipnsName: ipnsName
   });
   return response.data;
 };
+
+
+export const getIpnsRecord = async (ipnsName: string) => {
+  console.log('getIpnsRecord')
+  const response = await API.get(`/getIpnsRecord?ipnsName=` + ipnsName);
+
+  console.log(response.data, "response.data")
+
+  return response.data;
+}
+
+export const getFileContent = async (ipnsName: string) => {
+  const response = await API.get(`/getFileContent?ipnsName=` + ipnsName);
+  return response.data;
+}

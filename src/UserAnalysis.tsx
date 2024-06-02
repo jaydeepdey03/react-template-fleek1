@@ -6,44 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {ArrowRight, BarChartBig, LayoutDashboard, Pencil} from "lucide-react";
-import {Button} from "./components/ui/button";
-import {Line, LineChart, ResponsiveContainer} from "recharts";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {useNavigate} from "react-router-dom";
-import {useEffect} from "react";
-import {useContractHook} from "./Context/ContractContract";
+import { ArrowRight, BarChartBig, LayoutDashboard, Pencil } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useContractHook } from "./Context/ContractContract";
 
-// const data = [
-//   {
-//     average: 400,
-//     today: 240,
-//   },
-//   {
-//     average: 300,
-//     today: 139,
-//   },
-//   {
-//     average: 200,
-//     today: 980,
-//   },
-//   {
-//     average: 278,
-//     today: 390,
-//   },
-//   {
-//     average: 189,
-//     today: 480,
-//   },
-//   {
-//     average: 239,
-//     today: 380,
-//   },
-//   {
-//     average: 349,
-//     today: 430,
-//   },
-// ];
 
 const generateRandomData = () => {
   const data = [];
@@ -56,7 +26,7 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = (id: {id: number}) => {
+const ChartCard = (id: { id: number }) => {
   const data = generateRandomData(); // Generate random data for each card
   const navigate = useNavigate();
   return (
@@ -126,14 +96,42 @@ const ChartCard = (id: {id: number}) => {
   );
 };
 
+interface Workbook {
+  id: number;
+  owner: string;
+  ipns: string;
+  name: string;
+}
+
 export default function UserAnalysis() {
   const navigate = useNavigate();
-  const {chainId, currentAccount} = useContractHook();
+  const { chainId, currentAccount, contract } = useContractHook();
+  const [workbooks, setWorkbooks] = useState<Workbook[]>([]);
+
+
+  useEffect(() => {
+    const viewMyWorkbooks = async () => {
+      try {
+        if (contract) {
+          const workbooks = await contract.viewMyWorkbooks();
+          setWorkbooks(workbooks);
+        }
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    viewMyWorkbooks();
+  }, [contract])
+
+
   useEffect(() => {
     if (chainId === "" && currentAccount === "") {
       navigate("/");
     }
   }, [chainId, currentAccount, navigate]);
+
+
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row">
@@ -185,8 +183,8 @@ export default function UserAnalysis() {
             gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr)`,
           }}
         >
-          {[1, 2, 3, 4, 5, 6].map((_, index) => (
-            <ChartCard key={index} id={index} />
+          {workbooks.map((value, index) => (
+            <ChartCard key={index} id={value.id} />
           ))}
         </div>
       </div>

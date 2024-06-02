@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {ArrowLeft} from "lucide-react";
-import {useNavigate} from "react-router-dom";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import CodeEditor from "./components/CodeEditor";
 import Output from "./components/Output";
-import {useRef, useState} from "react";
-import {CODE_SNIPPETS, type Language} from "./lib/constants";
+import { useEffect, useRef, useState } from "react";
+import { CODE_SNIPPETS, type Language } from "./lib/constants";
+import { getIpnsRecord, getFileContent } from "./components/api";
+import { useContractHook } from "./Context/ContractContract";
 
 export default function Analysis() {
   const navigate = useNavigate();
@@ -15,10 +17,67 @@ export default function Analysis() {
   );
   const editorRef = useRef(null);
 
+  const { contract } = useContractHook();
+
   const onMount = (editor: any) => {
     editorRef.current = editor;
     editor.focus();
   };
+
+  const { id } = useParams();
+
+  const [sheetDetails, setSheetDetails] = useState<any>(null)
+  const [contentKey, setContentKey] = useState<{ ipnsName: string } | null>(null)
+
+
+  useEffect(() => {
+
+    const viewSheetDetails = async (id: string | undefined) => {
+      try {
+        const res = await contract.viewSheetDetails(id);
+        console.log(res, "res")
+        setSheetDetails(res)
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+    if (id)
+      viewSheetDetails(id)
+
+  }, [id, contract])
+
+
+  useEffect(() => {
+    const getIFSHhash = async () => {
+      console.log("sheetDetails", sheetDetails)
+      const key = await getIpnsRecord(sheetDetails.ipns)
+      console.log(key, "key")
+      setContentKey(key)
+    }
+
+    if (sheetDetails) {
+      getIFSHhash()
+    }
+  }, [sheetDetails])
+
+
+
+  useEffect(() => {
+    console.log("contentKey", contentKey)
+    const updateCode = async () => {
+      const res = await getFileContent(contentKey?.ipnsName ?? '')
+      console.log(res, "res")
+      setValue(res.content)
+    }
+    if (contentKey) {
+      updateCode()
+    }
+  }, [contentKey])
+
+
+
+
   return (
     <div className="h-screen w-full relative">
       <div className="h-[100px] w-full flex items-center justify-between px-10 bg-gray-900 absolute inset-0">
@@ -68,7 +127,7 @@ export default function Analysis() {
             height: "calc(100% - 100px)",
           }}
         >
-          <Output editorRef={editorRef} language={language} />
+          <Output editorRef={editorRef} language={language} contentKey={contentKey} contentValue={value} />
         </div>
       </div>
     </div>

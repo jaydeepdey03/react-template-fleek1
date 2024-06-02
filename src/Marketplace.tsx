@@ -171,7 +171,7 @@ export default function Marketplace() {
       await res.wait();
       console.log(res, "res");
 
-      navigate("/create")
+      navigate("/analysis/" + Number(res?.id));
 
     } catch (error) {
       console.log(error)
