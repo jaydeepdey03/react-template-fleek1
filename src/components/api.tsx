@@ -4,7 +4,7 @@ import axios from "axios";
 import {LANGUAGE_VERSIONS} from "@/lib/constants";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://loomhub.onrender.com",
 });
 
 export const executeCode = async (language: any, sourceCode: any) => {

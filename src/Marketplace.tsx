@@ -155,8 +155,8 @@ const ChartCard = ({
         </CardHeader>
         <CardContent>
           <div className="h-[150px] relative">
-            {!purchasedIds.includes(id) ||
-              (owner.toLowerCase() === currentAccount.toLowerCase() && (
+            {purchasedIds.includes(id) ||
+              (owner.toLowerCase() !== currentAccount.toLowerCase() && (
                 <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
                   <p className="font-semibold">
                     Purchase this analysis to reveal
@@ -165,8 +165,8 @@ const ChartCard = ({
               ))}
             <div
               className={`absolute inset-0 w-full h-full ${
-                !purchasedIds.includes(id) ||
-                (owner.toLowerCase() === currentAccount.toLowerCase() &&
+                purchasedIds.includes(id) ||
+                (owner.toLowerCase() !== currentAccount.toLowerCase() &&
                   "blur-sm")
               }`}
             >

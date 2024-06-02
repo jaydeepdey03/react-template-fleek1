@@ -1,7 +1,7 @@
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -33,7 +33,15 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = (id: {id: number}) => {
+const ChartCard = ({
+  id,
+  title,
+  owner,
+}: {
+  id: number;
+  title: string;
+  owner: string;
+}) => {
   const data = generateRandomData(); // Generate random data for each card
   const navigate = useNavigate();
   return (
@@ -42,8 +50,9 @@ const ChartCard = (id: {id: number}) => {
         <CardHeader className="">
           <div className="flex justify-between w-full items-center">
             <div>
-              <CardTitle>Analysis Title</CardTitle>
-              <CardDescription>Analysis Description</CardDescription>
+              <CardTitle>
+                <p className="text-lg font-semibold">{title}</p>
+              </CardTitle>
             </div>
             <div className="flex">
               <Avatar className="h-8 w-8 -ml-4 first:ml-0">
@@ -86,12 +95,17 @@ const ChartCard = (id: {id: number}) => {
         </CardContent>
         <CardFooter>
           <div className="flex items-center justify-between w-full">
-            <p className="text-sm">Author</p>
+            <div className="flex flex-col items-start">
+              <p className="text-sm">Author</p>
+              <p className="text-sm font-semibold">
+                {owner.slice(0, 6) + "..." + owner.slice(owner.length - 4)}
+              </p>
+            </div>
             <Button
               size="sm"
               variant={"outline"}
               className="group"
-              onClick={() => navigate(`/analysis/${id.id}`)}
+              onClick={() => navigate(`/analysis/${id}`)}
             >
               View{" "}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
@@ -210,7 +224,7 @@ export default function UserAnalysis() {
       </div>
       <div className="h-full w-full p-5">
         <div className="pb-5 text-lg font-semibold text-gray-800">
-          Your Analysis (8)
+          Your Analysis ({workbooks.length})
         </div>
         <div
           className="grid h-fit w-full gap-4"
@@ -219,7 +233,12 @@ export default function UserAnalysis() {
           }}
         >
           {workbooks.map((value, index) => (
-            <ChartCard key={index} id={value.id} />
+            <ChartCard
+              key={index}
+              id={value.id}
+              title={value.name}
+              owner={value.owner.toLowerCase()}
+            />
           ))}
         </div>
       </div>

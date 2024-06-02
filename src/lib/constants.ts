@@ -29,10 +29,10 @@ def fetchData(api_url):
 
 # greet("Alex")
 # This is for token details
-fetchData("http://localhost:8000/getTokenDetailsLatest?symbol=WETH")
+fetchData("https://loomhub.onrender.com/getTokenDetailsLatest?symbol=WETH")
 
 # This is for past token details, num is the number of previous epochs values
-fetchData("http://localhost:8000/getTokenPrice?num=5&symbol=WETH")
+fetchData("https://loomhub.onrender.com/getTokenPrice?num=5&symbol=WETH")
 
 
 
