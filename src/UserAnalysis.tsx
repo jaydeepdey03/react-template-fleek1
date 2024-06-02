@@ -6,14 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, BarChartBig, LayoutDashboard, Pencil } from "lucide-react";
-import { Button } from "./components/ui/button";
-import { Line, LineChart, ResponsiveContainer } from "recharts";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useContractHook } from "./Context/ContractContract";
-
+import {
+  ArrowRight,
+  BarChartBig,
+  Briefcase,
+  LayoutDashboard,
+  Pencil,
+} from "lucide-react";
+import {Button} from "./components/ui/button";
+import {Line, LineChart, ResponsiveContainer} from "recharts";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useContractHook} from "./Context/ContractContract";
+import {initializeProject} from "./components/api";
+import {LoadingSpinner} from "./components/ui/LoadingSpinner";
 
 const generateRandomData = () => {
   const data = [];
@@ -26,7 +33,7 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = (id: { id: number }) => {
+const ChartCard = (id: {id: number}) => {
   const data = generateRandomData(); // Generate random data for each card
   const navigate = useNavigate();
   return (
@@ -105,9 +112,8 @@ interface Workbook {
 
 export default function UserAnalysis() {
   const navigate = useNavigate();
-  const { chainId, currentAccount, contract } = useContractHook();
+  const {chainId, currentAccount, contract} = useContractHook();
   const [workbooks, setWorkbooks] = useState<Workbook[]>([]);
-
 
   useEffect(() => {
     const viewMyWorkbooks = async () => {
@@ -116,14 +122,12 @@ export default function UserAnalysis() {
           const workbooks = await contract.viewMyWorkbooks();
           setWorkbooks(workbooks);
         }
-
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     viewMyWorkbooks();
-  }, [contract])
-
+  }, [contract]);
 
   useEffect(() => {
     if (chainId === "" && currentAccount === "") {
@@ -131,7 +135,24 @@ export default function UserAnalysis() {
     }
   }, [chainId, currentAccount, navigate]);
 
-
+  const [createLoading, setCreateLoading] = useState(false);
+  const handleNewAnalysis = async () => {
+    setCreateLoading(true);
+    try {
+      const response = await initializeProject();
+      console.log("response", response);
+      const res = await contract.addIPNS("test", response.ipnsName);
+      await res.wait();
+      console.log(res, "res");
+      if (res) {
+        navigate("/analysis/" + Number(res.id));
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row">
@@ -156,18 +177,32 @@ export default function UserAnalysis() {
           </div>
           <div
             className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
-            onClick={() => navigate("/create")}
+            onClick={() => handleNewAnalysis()}
           >
             <div className="flex items-center gap-2">
               <Pencil />
               <p className="text-lg font-semibold">Create New Analysis</p>
             </div>
-            <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
+            {createLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
+            )}
           </div>
           <div className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer">
             <div className="flex items-center gap-2">
               <BarChartBig />
               <p className="text-lg font-semibold">Your Analysis</p>
+            </div>
+            <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
+          </div>
+          <div
+            className="mt-5 flex items-center justify-between gap-3 w-full px-4 h-[70px] rounded-lg border border-gray-600 group cursor-pointer"
+            onClick={() => navigate("/purchased-analysis")}
+          >
+            <div className="flex items-center gap-2">
+              <Briefcase />
+              <p className="text-lg font-semibold">Your Purchased Analysis</p>
             </div>
             <ArrowRight className="group-hover:translate-x-1 duration-150 ease-in-out" />
           </div>

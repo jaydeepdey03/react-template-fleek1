@@ -15,6 +15,7 @@ import {useContractHook} from "./Context/ContractContract";
 import {Button} from "./components/ui/button";
 import Create from "./Create";
 import UserAnalysis from "./UserAnalysis";
+import PurchasedAnalysis from "./PurchasedAnalysis";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -68,6 +69,7 @@ function App() {
           <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/analysis/:id" element={<Analysis />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/purchased-analysis" element={<PurchasedAnalysis />} />
           <Route path="/user-analysis/" element={<UserAnalysis />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>

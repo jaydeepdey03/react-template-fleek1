@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Card,
   CardContent,
-  CardDescription,
+  //   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -19,49 +19,9 @@ import {Line, LineChart, ResponsiveContainer} from "recharts";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {initializeProject} from "../src/components/api";
 import {useContractHook} from "./Context/ContractContract";
-import {toast} from "sonner";
+import {initializeProject} from "./components/api";
 import {LoadingSpinner} from "./components/ui/LoadingSpinner";
-import {ethers} from "ethers";
-
-// const data = [
-//   {
-//     average: 400,
-//     today: 240,
-//   },
-//   {
-//     average: 300,
-//     today: 139,
-//   },
-//   {
-//     average: 200,
-//     today: 980,
-//   },
-//   {
-//     average: 278,
-//     today: 390,
-//   },
-//   {
-//     average: 189,
-//     today: 480,
-//   },
-//   {
-//     average: 239,
-//     today: 380,
-//   },
-//   {
-//     average: 349,
-//     today: 430,
-//   },
-// ];
-
-type Workbook = {
-  owner: string;
-  ipns: string;
-  name: string;
-  id: number;
-};
 
 const generateRandomData = () => {
   const data = [];
@@ -74,56 +34,16 @@ const generateRandomData = () => {
   return data;
 };
 
-const ChartCard = ({id}: {id: number}) => {
+const ChartCard = ({id, title}: {id: number; title: string}) => {
   const data = generateRandomData(); // Generate random data for each card
-  const {currentAccount, contractAddress, contract} = useContractHook();
-
-  const approveAndSendTokens = async (id: number) => {
-    if (!currentAccount) {
-      alert("Please connect your wallet first");
-      return;
-    }
-
-    const tokenAddress = "0x2e5221B0f855Be4ea5Cefffb8311EED0563B6e87"; // Replace with your token contract address
-    const amount = ethers.utils.parseUnits("0.001", 18); // Replace with the amount you want to send
-    const abi = [
-      // The contract ABI, replace with your contract's ABI
-      "function approve(address spender, uint256 amount) public returns (bool)",
-      "function transfer(address to, uint256 amount) public returns (bool)",
-    ];
-
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const tokenContract = new ethers.Contract(tokenAddress, abi, signer);
-
-      // Approve the transfer
-      const approvalTx = await tokenContract.approve(contractAddress, amount);
-      toast("Approval transaction sent, waiting for confirmation...");
-      await approvalTx.wait();
-      toast("Approval transaction confirmed");
-
-      // Send the tokens
-      const transferTx = await contract.addId(id, {
-        value: ethers.utils.parseUnits("0.001", 18),
-      });
-      toast("Token transfer transaction sent, waiting for confirmation...");
-      await transferTx.wait();
-      toast("Token transfer transaction confirmed");
-    } catch (error) {
-      console.error("Error approving and sending tokens", error);
-      toast("Error approving and sending tokens");
-    }
-  };
-
+  const navigate = useNavigate();
   return (
     <div className="h-full w-full">
       <Card className="h-full w-full">
         <CardHeader className="">
           <div className="flex justify-between w-full items-center">
             <div>
-              <CardTitle>Analysis Title</CardTitle>
-              <CardDescription>Analysis Description</CardDescription>
+              <CardTitle>{title}</CardTitle>
             </div>
             <div className="flex">
               <Avatar className="h-8 w-8 -ml-4 first:ml-0">
@@ -143,10 +63,10 @@ const ChartCard = ({id}: {id: number}) => {
         </CardHeader>
         <CardContent>
           <div className="h-[150px] relative">
-            <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
-              <p className="font-semibold">Purchase this analysis to reveal</p>
-            </div>
-            <div className="absolute inset-0 w-full h-full blur-sm">
+            {/* <div className="z-10 absolute inset-0 w-full h-full flex justify-center items-center">
+                <p className="font-semibold">Purchase this analysis to reveal</p>
+              </div> */}
+            <div className="absolute inset-0 w-full h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={data}
@@ -171,9 +91,9 @@ const ChartCard = ({id}: {id: number}) => {
               size="sm"
               variant={"outline"}
               className="group"
-              onClick={() => approveAndSendTokens(id)}
+              onClick={() => navigate(`/analysis/${id}`)}
             >
-              Buy{" "}
+              View{" "}
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 duration-150 ease-in-out  " />
             </Button>
           </div>
@@ -183,10 +103,44 @@ const ChartCard = ({id}: {id: number}) => {
   );
 };
 
-export default function Marketplace() {
+interface Workbook {
+  id: number;
+  owner: string;
+  ipns: string;
+  name: string;
+}
+
+export default function PurchasedAnalysis() {
   const navigate = useNavigate();
   const {chainId, currentAccount, contract} = useContractHook();
   const [workbooks, setWorkbooks] = useState<Workbook[]>([]);
+
+  useEffect(() => {
+    const viewMyWorkbooks = async () => {
+      try {
+        if (contract) {
+          const ids = await contract.viewAllIds();
+          const workbooks = await contract.viewAllWorkbooks();
+          console.log(ids, "ids");
+          console.log(workbooks, "workbooksfrom");
+          const filteredWorkbooks = workbooks.filter((workbook: Workbook) => {
+            for (let i = 0; i < ids.length; i++) {
+              if (Number(ids[i]) === Number(workbook.id)) {
+                return workbook;
+              }
+            }
+          });
+
+          console.log(filteredWorkbooks, "filteredWorkbooks");
+
+          setWorkbooks(filteredWorkbooks);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    viewMyWorkbooks();
+  }, [contract]);
 
   useEffect(() => {
     if (chainId === "" && currentAccount === "") {
@@ -194,39 +148,13 @@ export default function Marketplace() {
     }
   }, [chainId, currentAccount, navigate]);
 
-  useEffect(() => {
-    console.log("contract", contract);
-    const viewAllWorkBooks = async () => {
-      try {
-        const result = await contract.viewAllWorkbooks();
-        console.log(result, "workbooks");
-        const temp: Workbook[] = [];
-        result.forEach((workbook: Workbook) => {
-          if (workbook) {
-            temp.push({
-              owner: workbook.owner,
-              ipns: workbook.ipns,
-              name: workbook.name,
-              id: Number(workbook.id),
-            });
-          }
-        });
-        setWorkbooks(temp);
-      } catch (error: any) {
-        console.log(error);
-        toast(`Error: ${error.message}`);
-      }
-    };
-    viewAllWorkBooks();
-  }, [contract]);
-
   const [createLoading, setCreateLoading] = useState(false);
   const handleNewAnalysis = async () => {
     setCreateLoading(true);
     try {
       const response = await initializeProject();
       console.log("response", response);
-      const res = await contract.addIPNS("test", response.ipnsName);
+      const res = await contract.addIPNS("Untitled", response.ipnsName);
       await res.wait();
       console.log(res, "res");
       if (res) {
@@ -298,7 +226,7 @@ export default function Marketplace() {
       </div>
       <div className="h-full w-full p-5">
         <div className="pb-5 text-lg font-semibold text-gray-800">
-          All Analysis
+          Your Purchased Analysis ({workbooks.length})
         </div>
         <div
           className="grid h-fit w-full gap-4"
@@ -306,27 +234,11 @@ export default function Marketplace() {
             gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr)`,
           }}
         >
-          {/* {<pre>{JSON.stringify(currentAccount, null, 2)}</pre>} */}
-          {workbooks &&
-            workbooks.length > 0 &&
-            workbooks
-              .filter(
-                (item) =>
-                  currentAccount.toLowerCase() !== item.owner.toLowerCase()
-              )
-              .map((item, index) => (
-                <ChartCard key={index} id={Number(item.id)} />
-              ))}
+          {workbooks.map((value, index) => (
+            <ChartCard key={index} id={Number(value.id)} title={value.name} />
+          ))}
 
-          {workbooks &&
-            workbooks.filter(
-              (item) =>
-                currentAccount.toLowerCase() !== item.owner.toLowerCase()
-            ).length === 0 && (
-              <div className="w-full h-full flex justify-center items-center">
-                <p className="text-lg font-semibold">No Analysis found</p>
-              </div>
-            )}
+          {/* {console.log(workbooks, "from purchased analysis")} */}
         </div>
       </div>
     </div>

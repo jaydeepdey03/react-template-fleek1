@@ -7,14 +7,16 @@ export default function CodeEditor({
   onMount,
   value,
   setValue,
+  readOnly = false,
 }: {
   language: Language;
   onMount: (editor: any) => void;
   value: string | undefined;
   setValue: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
-    <div className="h-full w-full">
+    <div className="h-[600px] lg:h-full w-full">
       <Editor
         theme="vs-dark"
         height="100%"
@@ -23,6 +25,9 @@ export default function CodeEditor({
         defaultValue={CODE_SNIPPETS[language]}
         onMount={onMount}
         value={value}
+        options={{
+          readOnly: readOnly,
+        }}
         onChange={(value) => setValue(value ?? "")}
       />
     </div>

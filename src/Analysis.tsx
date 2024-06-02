@@ -1,82 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {ArrowLeft} from "lucide-react";
+import {useNavigate, useParams} from "react-router-dom";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import CodeEditor from "./components/CodeEditor";
 import Output from "./components/Output";
-import { useEffect, useRef, useState } from "react";
-import { CODE_SNIPPETS, type Language } from "./lib/constants";
-import { getIpnsRecord, getFileContent } from "./components/api";
-import { useContractHook } from "./Context/ContractContract";
+import {useEffect, useRef, useState} from "react";
+import {CODE_SNIPPETS, type Language} from "./lib/constants";
+import {getIpnsRecord, getFileContent} from "./components/api";
+import {useContractHook} from "./Context/ContractContract";
 
 export default function Analysis() {
   const navigate = useNavigate();
+
   const [language] = useState<Language>("python");
   const [value, setValue] = useState<string | undefined>(
     CODE_SNIPPETS["python"]
   );
   const editorRef = useRef(null);
 
-  const { contract } = useContractHook();
+  const {contract, currentAccount} = useContractHook();
 
   const onMount = (editor: any) => {
     editorRef.current = editor;
     editor.focus();
   };
 
-  const { id } = useParams();
+  const {id} = useParams();
 
-  const [sheetDetails, setSheetDetails] = useState<any>(null)
-  const [contentKey, setContentKey] = useState<{ ipnsName: string } | null>(null)
-
+  const [sheetDetails, setSheetDetails] = useState<any>(null);
+  const [contentKey, setContentKey] = useState<{ipnsName: string} | null>(null);
 
   useEffect(() => {
-
     const viewSheetDetails = async (id: string | undefined) => {
       try {
         const res = await contract.viewSheetDetails(id);
-        console.log(res, "res")
-        setSheetDetails(res)
+        console.log(res, "res");
+        setSheetDetails(res);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-
-    }
-    if (id)
-      viewSheetDetails(id)
-
-  }, [id, contract])
-
+    };
+    if (id) viewSheetDetails(id);
+  }, [id, contract]);
 
   useEffect(() => {
     const getIFSHhash = async () => {
-      console.log("sheetDetails", sheetDetails)
-      const key = await getIpnsRecord(sheetDetails.ipns)
-      console.log(key, "key")
-      setContentKey(key)
-    }
+      console.log("sheetDetails", sheetDetails);
+      const key = await getIpnsRecord(sheetDetails.ipns);
+      console.log(key, "key");
+      setContentKey(key);
+    };
 
     if (sheetDetails) {
-      getIFSHhash()
+      getIFSHhash();
     }
-  }, [sheetDetails])
-
-
+  }, [sheetDetails]);
 
   useEffect(() => {
-    console.log("contentKey", contentKey)
+    console.log("contentKey", contentKey);
     const updateCode = async () => {
-      const res = await getFileContent(contentKey?.ipnsName ?? '')
-      console.log(res, "res")
-      setValue(res.content)
-    }
+      const res = await getFileContent(contentKey?.ipnsName ?? "");
+      console.log(res, "res");
+      setValue(res.content);
+    };
     if (contentKey) {
-      updateCode()
+      updateCode();
     }
-  }, [contentKey])
-
-
-
+  }, [contentKey]);
 
   return (
     <div className="h-screen w-full relative">
@@ -87,7 +77,7 @@ export default function Analysis() {
         >
           <ArrowLeft className="h-8 w-8 p-1 border rounded-full text-white" />
           <p className="text-white text-xl font-semibold">
-            Analysis of USDT-USDC Pair
+            {sheetDetails?.name}
           </p>
         </div>
         <div className="flex">
@@ -114,6 +104,12 @@ export default function Analysis() {
         >
           <div className="bg-white w-full h-full border-2 rounded-xl">
             <CodeEditor
+              readOnly={
+                sheetDetails?.owner.toLowerCase() !==
+                currentAccount.toLowerCase()
+                  ? true
+                  : false
+              }
               language={language}
               onMount={onMount}
               value={value}
@@ -127,7 +123,12 @@ export default function Analysis() {
             height: "calc(100% - 100px)",
           }}
         >
-          <Output editorRef={editorRef} language={language} contentKey={contentKey} contentValue={value} />
+          <Output
+            editorRef={editorRef}
+            language={language}
+            contentKey={contentKey}
+            contentValue={value}
+          />
         </div>
       </div>
     </div>
